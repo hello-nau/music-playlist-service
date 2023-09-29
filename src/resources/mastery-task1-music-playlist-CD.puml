@@ -1,1 +1,82 @@
-PARTICIPANTS: use this file for creating the class diagram in mastery task 01
+@startuml
+class AddSongToPlaylistActivity {
+- Logger log;
+- PlaylistDao playlistDao;
+- AlbumTrackDao albumTrackDao;
++ handleRequest(AddSongToPlaylistRequest addSongToPlaylistRequest, Context context) : AddSongToPlaylistResult;
+}
+class CreatePlaylistActivity {
+- Logger log;
+- PlaylistDao playlistDao;
++ handleRequest(CreatePlaylistRequest createPlaylistRequest, Context context) : CreatePlaylistResult;
+}
+class  GetPlaylistActivity {
+- Logger log;
+- PlaylistDao playlistDao;
++ handleRequest(GetPlaylistRequest getPlaylistRequest, Context context) : GetPlaylistResult;
+}
+class  GetPlaylistSongsActivity {
+- Logger log;
+- PlaylistDao playlistDao;
++ handleRequest(GetPlaylistSongsRequest getPlaylistSongsRequest, Context context) : GetPlaylistSongsResult;
+}
+class UpdatePlaylistActivity {
+- Logger log;
+- PlaylistDao playlistDao;
++ handleRequest(UpdatePlaylistRequest updatePlaylistRequest, Context context) :  UpdatePlaylistResult;
+}
+class AlbumTrackDao {
+- dynamoDbMapper : DynamoDBMapper;
+}
+class PlaylistDao {
+- dynamoDbMapper : DynamoDBMapper ;
++ getPlaylist(String id) : Playlist;
+}
+class  AlbumTrack {
+- @DynamoDBHashKey asin : String
+- @DynamoDBRangeKey trackNumber : Integer
+- albumName : String
+- songTitle : String
+
+}
+class Playlist {
+- @DynamoDBHashKey id : String
+- name : String
+- customerId : String
+- songCount : Integer
+- tags : Set<String>
+- songList: List<AlbumTrack>
++ getId()
++ seId(String id)
++ getSongList(): List<AlbumTrack>
++ setSongList(List<AlbumTrack> songList)
+}
+class AlbumTrackNotFoundException {
+- serialVersionUID;
++ AlbumTrackNotFoundException(String message);
++ AlbumTrackNotFoundException(Throwable cause);
++ AlbumTrackNotFoundException(String message, Throwable cause);
+}
+class InvalidAttributeValueException {
+- serialVersionUID;
++ InvalidAttributeValueException(String message);
++ public InvalidAttributeValueException(Throwable cause);
++ InvalidAttributeValueException(String message, Throwable cause);
+}
+class PlaylistNotFoundException {
+- serialVersionUID;
++ PlaylistNotFoundException(String message);
++ PlaylistNotFoundException(Throwable cause);
++ PlaylistNotFoundException(String message, Throwable cause);
+}
+
+Playlist o-- AlbumTrack
+AddSongToPlaylistActivity o-- AlbumTrackDao
+CreatePlaylistActivity o-- PlaylistDao
+AddSongToPlaylistActivity o-- PlaylistDao
+GetPlaylistActivity o-- PlaylistDao
+GetPlaylistSongsActivity o-- PlaylistDao
+UpdatePlaylistActivity o-- PlaylistDao
+
+
+@enduml

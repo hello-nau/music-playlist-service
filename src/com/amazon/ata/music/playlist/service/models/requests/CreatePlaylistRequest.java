@@ -1,5 +1,6 @@
 package com.amazon.ata.music.playlist.service.models.requests;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
