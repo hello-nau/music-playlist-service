@@ -57,11 +57,19 @@ class AlbumTrackNotFoundException {
 + AlbumTrackNotFoundException(Throwable cause);
 + AlbumTrackNotFoundException(String message, Throwable cause);
 }
-class InvalidAttributeValueException {
+class RunTimeException {
+}
+class InvalidAttributeValueException extends RunTimeException{
 - serialVersionUID;
 + InvalidAttributeValueException(String message);
 + public InvalidAttributeValueException(Throwable cause);
 + InvalidAttributeValueException(String message, Throwable cause);
+}
+class InvalidAttributeChangeException extends RunTimeException{
+- serialVersionUID;
++ InvalidAttributeChangeException(String message);
++ public InvalidAttributeChangeException(Throwable cause);
++ InvalidAttributeChangeException(String message, Throwable cause);
 }
 class PlaylistNotFoundException {
 - serialVersionUID;
@@ -77,6 +85,8 @@ AddSongToPlaylistActivity o-- PlaylistDao
 GetPlaylistActivity o-- PlaylistDao
 GetPlaylistSongsActivity o-- PlaylistDao
 UpdatePlaylistActivity o-- PlaylistDao
+InvalidAttributeChangeException --|> RuntimeException
+InvalidAttributeValueException --|> RuntimeException
 
 
 @enduml

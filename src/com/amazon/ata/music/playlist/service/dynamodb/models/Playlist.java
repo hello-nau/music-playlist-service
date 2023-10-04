@@ -64,6 +64,7 @@ public class Playlist {
     }
 
     public void setId(String id) {
+        id = MusicPlaylistServiceUtils.generatePlaylistId();
         this.id = id;
     }
 
