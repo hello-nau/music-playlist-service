@@ -1,5 +1,7 @@
 package com.amazon.ata.music.playlist.service.activity;
 
+import com.amazon.ata.music.playlist.service.dependency.DaggerServiceComponent;
+import com.amazon.ata.music.playlist.service.dependency.ServiceComponent;
 import com.amazon.ata.music.playlist.service.models.requests.GetPlaylistRequest;
 import com.amazon.ata.music.playlist.service.models.results.GetPlaylistResult;
 import com.amazon.ata.music.playlist.service.models.PlaylistModel;
@@ -12,6 +14,8 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Inject;
+
 /**
  * Implementation of the GetPlaylistActivity for the MusicPlaylistService's GetPlaylist API.
  *
@@ -20,14 +24,20 @@ import org.apache.logging.log4j.Logger;
 public class GetPlaylistActivity implements RequestHandler<GetPlaylistRequest, GetPlaylistResult> {
     private final Logger log = LogManager.getLogger();
     private final PlaylistDao playlistDao;
+//    public GetPlaylistActivity() {
+//
+//    }
 
     /**
      * Instantiates a new GetPlaylistActivity object.
      *
-     * @param playlistDao PlaylistDao to access the playlist table.
+     * @param - PlaylistDao to access the playlist table.
      */
-    public GetPlaylistActivity(PlaylistDao playlistDao) {
-        this.playlistDao = playlistDao;
+@Inject
+    public GetPlaylistActivity() {
+        ServiceComponent dagger = DaggerServiceComponent.create();
+        this.playlistDao = dagger.provideDaoModule().providePlaylistDao();
+
     }
 
     /**

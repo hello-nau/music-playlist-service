@@ -1,6 +1,8 @@
 package com.amazon.ata.music.playlist.service.activity;
 
-import com.amazon.ata.aws.dynamodb.DynamoDbClientProvider;
+
+import com.amazon.ata.music.playlist.service.dependency.DaggerServiceComponent;
+import com.amazon.ata.music.playlist.service.dependency.ServiceComponent;
 import com.amazon.ata.music.playlist.service.dynamodb.models.Playlist;
 import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeChangeException;
 import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeValueException;
@@ -11,11 +13,13 @@ import com.amazon.ata.music.playlist.service.models.results.UpdatePlaylistResult
 import com.amazon.ata.music.playlist.service.dynamodb.PlaylistDao;
 
 import com.amazon.ata.music.playlist.service.util.MusicPlaylistServiceUtils;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.inject.Inject;
 
 /**
  * Implementation of the UpdatePlaylistActivity for the MusicPlaylistService's UpdatePlaylist API.
@@ -25,17 +29,19 @@ import org.apache.logging.log4j.Logger;
 public class UpdatePlaylistActivity implements RequestHandler<UpdatePlaylistRequest, UpdatePlaylistResult> {
     private final Logger log = LogManager.getLogger();
     private final PlaylistDao playlistDao;
-    public UpdatePlaylistActivity(){
-        playlistDao = new PlaylistDao(new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient()));
-    }
+
+
+
 
     /**
      * Instantiates a new UpdatePlaylistActivity object.
      *
-     * @param playlistDao PlaylistDao to access the playlist table.
+     * @param - PlaylistDao to access the playlist table.
      */
-    public UpdatePlaylistActivity(PlaylistDao playlistDao) {
-        this.playlistDao = playlistDao;
+@Inject
+    public UpdatePlaylistActivity() {
+        ServiceComponent dagger = DaggerServiceComponent.create();
+        playlistDao = dagger.provideDaoModule().providePlaylistDao();
     }
 
     /**

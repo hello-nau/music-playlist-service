@@ -2,6 +2,8 @@ package com.amazon.ata.music.playlist.service.activity;
 
 import com.amazon.ata.aws.dynamodb.DynamoDbClientProvider;
 import com.amazon.ata.music.playlist.service.converters.ModelConverter;
+import com.amazon.ata.music.playlist.service.dependency.DaggerServiceComponent;
+import com.amazon.ata.music.playlist.service.dependency.ServiceComponent;
 import com.amazon.ata.music.playlist.service.dynamodb.models.Playlist;
 import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeValueException;
 import com.amazon.ata.music.playlist.service.models.requests.CreatePlaylistRequest;
@@ -19,6 +21,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Inject;
 import javax.swing.plaf.synth.Region;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,16 +36,18 @@ public class CreatePlaylistActivity implements RequestHandler<CreatePlaylistRequ
     private final Logger log = LogManager.getLogger();
     private final PlaylistDao playlistDao;
 
-    public CreatePlaylistActivity(){
-        playlistDao = new PlaylistDao(new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient()));
-    }
+//    public CreatePlaylistActivity(){
+//        playlistDao = new PlaylistDao(new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient()));
+//    }
     /**
      * Instantiates a new CreatePlaylistActivity object.
      *
-     * @param playlistDao PlaylistDao to access the playlists table.
+     * @param - PlaylistDao to access the playlists table.
      */
-    public CreatePlaylistActivity(PlaylistDao playlistDao) {
-        this.playlistDao = playlistDao;
+    @Inject
+    public CreatePlaylistActivity() {
+        ServiceComponent dagger = DaggerServiceComponent.create();
+        playlistDao = dagger.provideDaoModule().providePlaylistDao();
     }
 
     /**

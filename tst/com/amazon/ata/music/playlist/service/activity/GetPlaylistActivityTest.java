@@ -25,7 +25,7 @@ public class GetPlaylistActivityTest {
     @BeforeEach
     public void setUp() {
         initMocks(this);
-        getPlaylistActivity = new GetPlaylistActivity(playlistDao);
+        getPlaylistActivity = new GetPlaylistActivity();
     }
 
     @Test
