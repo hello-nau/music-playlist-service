@@ -2,6 +2,7 @@ package com.amazon.ata.music.playlist.service.dynamodb;
 
 import com.amazon.ata.music.playlist.service.dynamodb.models.AlbumTrack;
 
+import com.amazon.ata.music.playlist.service.models.SongModel;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 
 import javax.inject.Inject;
@@ -20,5 +21,9 @@ public class AlbumTrackDao {
     @Inject
     public AlbumTrackDao(DynamoDBMapper dynamoDbMapper) {
         this.dynamoDbMapper = dynamoDbMapper;
+    }
+    public AlbumTrack getAlbumTrack(String asin, Integer trackNumber) {
+       return dynamoDbMapper.load(AlbumTrack.class, asin, trackNumber);
+
     }
 }

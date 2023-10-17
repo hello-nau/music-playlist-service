@@ -24,9 +24,10 @@ public class AddSongToPlaylistActivityProvider implements RequestHandler<AddSong
 
     @Override
     public AddSongToPlaylistResult handleRequest(final AddSongToPlaylistRequest addSongToPlaylistRequest, Context context) {
-        PlaylistDao playlistDao = getDagger().provideDaoModule().providePlaylistDao();
-        AddSongToPlaylistActivity addSongToPlaylistActivity =
-                new AddSongToPlaylistActivity(playlistDao, new AlbumTrackDao(getDagger().provideDaoModule().provideDynamoDBMapper()));
+//        PlaylistDao playlistDao = getDagger().provideDaoModule().providePlaylistDao();
+//
+        AddSongToPlaylistActivity addSongToPlaylistActivity = getDagger().provideAddSongToPlaylistActivity();
+//                new AddSongToPlaylistActivity(playlistDao, new AlbumTrackDao(getDagger().provideDaoModule().provideDynamoDBMapper()));
         return addSongToPlaylistActivity.handleRequest(addSongToPlaylistRequest, context);
     }
 

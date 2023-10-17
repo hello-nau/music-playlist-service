@@ -21,7 +21,7 @@ public class GetPlaylistSongsActivityProvider implements RequestHandler<GetPlayl
     public GetPlaylistSongsResult handleRequest(final GetPlaylistSongsRequest getPlaylistSongsRequest, Context context) {
 
         GetPlaylistSongsActivity getPlaylistSongsActivity =
-                new GetPlaylistSongsActivity();
+                new GetPlaylistSongsActivity(getDagger().provideDaoModule().providePlaylistDao());
         return getPlaylistSongsActivity.handleRequest(getPlaylistSongsRequest, context);
     }
 

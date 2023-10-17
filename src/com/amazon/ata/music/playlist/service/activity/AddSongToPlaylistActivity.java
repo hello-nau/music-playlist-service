@@ -1,5 +1,10 @@
 package com.amazon.ata.music.playlist.service.activity;
 
+import com.amazon.ata.music.playlist.service.converters.ModelConverter;
+import com.amazon.ata.music.playlist.service.dynamodb.models.AlbumTrack;
+import com.amazon.ata.music.playlist.service.dynamodb.models.Playlist;
+import com.amazon.ata.music.playlist.service.exceptions.AlbumTrackNotFoundException;
+import com.amazon.ata.music.playlist.service.exceptions.PlaylistNotFoundException;
 import com.amazon.ata.music.playlist.service.models.requests.AddSongToPlaylistRequest;
 import com.amazon.ata.music.playlist.service.models.results.AddSongToPlaylistResult;
 import com.amazon.ata.music.playlist.service.models.SongModel;
@@ -13,6 +18,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Implementation of the AddSongToPlaylistActivity for the MusicPlaylistService's AddSongToPlaylist API.
@@ -55,8 +62,33 @@ public class AddSongToPlaylistActivity implements RequestHandler<AddSongToPlayli
     public AddSongToPlaylistResult handleRequest(final AddSongToPlaylistRequest addSongToPlaylistRequest, Context context) {
         log.info("Received AddSongToPlaylistRequest {} ", addSongToPlaylistRequest);
 
+        Playlist playlistToSave = playlistDao.getPlaylist(addSongToPlaylistRequest.getId());
+        if (playlistToSave == null) {
+            throw new PlaylistNotFoundException("Playlist is not found.");
+        }
+        AlbumTrack albumTrack = albumTrackDao.getAlbumTrack(addSongToPlaylistRequest.getAsin(),
+                addSongToPlaylistRequest.getTrackNumber());
+        if (albumTrack == null) {
+            throw new AlbumTrackNotFoundException("Album track is not found.");
+        }
+
+        List<AlbumTrack> albumTracks = playlistToSave.getSongList();
+        LinkedList<AlbumTrack> existingAlbumTracksLinked = new LinkedList<>();
+        existingAlbumTracksLinked.addAll(albumTracks);
+
+        existingAlbumTracksLinked.add(albumTrack);
+
+        playlistDao.savePlaylist(playlistToSave);
+        ModelConverter modelConverter = new ModelConverter();
+        List<SongModel> songModelList = new LinkedList<>();
+
+        for (AlbumTrack albumTrack1 : existingAlbumTracksLinked) {
+            songModelList.add(modelConverter.toSongModel(albumTrack1));
+        }
+
         return AddSongToPlaylistResult.builder()
-                .withSongList(Collections.singletonList(new SongModel()))
+                .withSongList(songModelList)
+//                .withSongList(Collections.singletonList(new SongModel()))
                 .build();
     }
 }

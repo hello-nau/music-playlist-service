@@ -6,6 +6,7 @@ import com.amazon.ata.music.playlist.service.dependency.DaggerServiceComponent;
 import com.amazon.ata.music.playlist.service.dependency.ServiceComponent;
 import com.amazon.ata.music.playlist.service.dynamodb.models.Playlist;
 import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeValueException;
+import com.amazon.ata.music.playlist.service.lambda.CreatePlaylistActivityProvider;
 import com.amazon.ata.music.playlist.service.models.requests.CreatePlaylistRequest;
 import com.amazon.ata.music.playlist.service.models.results.CreatePlaylistResult;
 import com.amazon.ata.music.playlist.service.models.PlaylistModel;
@@ -65,32 +66,33 @@ public class CreatePlaylistActivity implements RequestHandler<CreatePlaylistRequ
      */
     @Override
     public CreatePlaylistResult handleRequest(final CreatePlaylistRequest createPlaylistRequest, Context context) {
-        log.info("Received CreatePlaylistRequest {}", createPlaylistRequest);
-        if(!MusicPlaylistServiceUtils.isValidString(createPlaylistRequest.getName()) ||
-                createPlaylistRequest.getCustomerId().contains("\"")
-                || createPlaylistRequest.getCustomerId().contains("'")
-                || createPlaylistRequest.getCustomerId().contains("\\")){
-            throw new InvalidAttributeValueException();
-        }
-        String newPlaylistId = MusicPlaylistServiceUtils.generatePlaylistId();
-        Playlist playlist = new Playlist();
-        playlist.setId(newPlaylistId);
-        playlist.setName(createPlaylistRequest.getName());
-        playlist.setCustomerId(createPlaylistRequest.getCustomerId());
-        if(createPlaylistRequest.getTags()!=null) {
-            playlist.setTags(new HashSet<>(createPlaylistRequest.getTags()));
-        }else{
-            Set<String> sortOfEmptySet= new HashSet<>();
-            sortOfEmptySet.add("");
-            playlist.setTags(sortOfEmptySet);
-        }
-        playlist.setSongList(new ArrayList<>());
-        playlist.setSongCount(0);
-        playlistDao.savePlaylist(playlist);
-        PlaylistModel playlistModel = new ModelConverter().toPlaylistModel(playlist);
+//        log.info("Received CreatePlaylistRequest {}", createPlaylistRequest);
+//        if(!MusicPlaylistServiceUtils.isValidString(createPlaylistRequest.getName()) ||
+//                createPlaylistRequest.getCustomerId().contains("\"")
+//                || createPlaylistRequest.getCustomerId().contains("'")
+//                || createPlaylistRequest.getCustomerId().contains("\\")){
+//            throw new InvalidAttributeValueException();
+//        }
+//        String newPlaylistId = MusicPlaylistServiceUtils.generatePlaylistId();
+//        Playlist playlist = new Playlist();
+//        playlist.setId(newPlaylistId);
+//        playlist.setName(createPlaylistRequest.getName());
+//        playlist.setCustomerId(createPlaylistRequest.getCustomerId());
+//        if(createPlaylistRequest.getTags()!=null) {
+//            playlist.setTags(new HashSet<>(createPlaylistRequest.getTags()));
+//        }else{
+//            Set<String> sortOfEmptySet= new HashSet<>();
+//            sortOfEmptySet.add("");
+//            playlist.setTags(sortOfEmptySet);
+//        }
+//        playlist.setSongList(new ArrayList<>());
+//        playlist.setSongCount(0);
+//        playlistDao.savePlaylist(playlist);
+//        PlaylistModel playlistModel = new ModelConverter().toPlaylistModel(playlist);
 
-        return CreatePlaylistResult.builder()
-                .withPlaylist(playlistModel)
-                .build();
+//        return CreatePlaylistResult.builder()
+//                .withPlaylist(playlistModel)
+//                .build();
+        return new CreatePlaylistActivityProvider().handleRequest(createPlaylistRequest, context);
     }
 }
