@@ -76,15 +76,22 @@ public class AddSongToPlaylistActivity implements RequestHandler<AddSongToPlayli
         LinkedList<AlbumTrack> existingAlbumTracksLinked = new LinkedList<>();
         existingAlbumTracksLinked.addAll(albumTracks);
 
-        existingAlbumTracksLinked.add(albumTrack);
+
 
         playlistDao.savePlaylist(playlistToSave);
         ModelConverter modelConverter = new ModelConverter();
         List<SongModel> songModelList = new LinkedList<>();
 
+        if (addSongToPlaylistRequest.isQueueNext()) {
+            existingAlbumTracksLinked.addFirst(albumTrack);
+        } else {
+            existingAlbumTracksLinked.add(albumTrack);
+        }
+
         for (AlbumTrack albumTrack1 : existingAlbumTracksLinked) {
             songModelList.add(modelConverter.toSongModel(albumTrack1));
         }
+
 
         return AddSongToPlaylistResult.builder()
                 .withSongList(songModelList)

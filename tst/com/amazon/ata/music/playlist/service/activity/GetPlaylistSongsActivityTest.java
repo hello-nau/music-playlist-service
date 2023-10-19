@@ -70,77 +70,81 @@ public class GetPlaylistSongsActivityTest {
                    "Expected song list to be empty but was " + result.getSongList());
     }
 
-//    @Test
-//    void handleRequest_withDefaultSongOrder_returnsDefaultOrderedPlaylistSongs() {
-//        // GIVEN
-//        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(10);
-//        String playlistId = playlist.getId();
-//
-//        GetPlaylistSongsRequest request = GetPlaylistSongsRequest.builder()
-//                                              .withId(playlistId)
-//                                              .withOrder(SongOrder.DEFAULT)
-//                                              .build();
-//        when(playlistDao.getPlaylist(playlistId)).thenReturn(playlist);
-//
-//        // WHEN
-//        GetPlaylistSongsResult result = getPlaylistSongsActivity.handleRequest(request, null);
-//
-//        // THEN
-//        AlbumTrackTestHelper.assertAlbumTracksEqualSongModels(playlist.getSongList(), result.getSongList());
-//    }
-//
-//    @Test
-//    void handleRequest_withReversedSongOrder_returnsReversedPlaylistSongs() {
-//        // GIVEN
-//        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(9);
-//        String playlistId = playlist.getId();
-//        List<AlbumTrack> reversedAlbumTracks = new LinkedList<>(playlist.getSongList());
-//        Collections.reverse(reversedAlbumTracks);
-//
-//        GetPlaylistSongsRequest request = GetPlaylistSongsRequest.builder()
-//                                              .withId(playlistId)
-//                                              .withOrder(SongOrder.REVERSED)
-//                                              .build();
-//        when(playlistDao.getPlaylist(playlistId)).thenReturn(playlist);
-//
-//        // WHEN
-//        GetPlaylistSongsResult result = getPlaylistSongsActivity.handleRequest(request, null);
-//
-//        // THEN
-//        AlbumTrackTestHelper.assertAlbumTracksEqualSongModels(reversedAlbumTracks, result.getSongList());
-//    }
-//
-//    @Test
-//    void handleRequest_withShuffledSongOrder_returnsSongsInAnyOrder() {
-//        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(8);
-//        String playlistId = playlist.getId();
-//
+    @Test
+    void handleRequest_withDefaultSongOrder_returnsDefaultOrderedPlaylistSongs() {
+        // GIVEN
+        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(10);
+        String playlistId = playlist.getId();
+
+        GetPlaylistSongsRequest request = GetPlaylistSongsRequest.builder()
+                                              .withId(playlistId)
+                                              .withOrder(SongOrder.DEFAULT)
+                                              .build();
+        when(playlistDao.getPlaylist(playlistId)).thenReturn(playlist);
+
+        // WHEN
+        GetPlaylistSongsResult result = getPlaylistSongsActivity.handleRequest(request, null);
+
+        // THEN
+        AlbumTrackTestHelper.assertAlbumTracksEqualSongModels(playlist.getSongList(), result.getSongList());
+    }
+
+    @Test
+    void handleRequest_withReversedSongOrder_returnsReversedPlaylistSongs() {
+        // GIVEN
+        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(9);
+        String playlistId = playlist.getId();
+        List<AlbumTrack> reversedAlbumTracks = new LinkedList<>(playlist.getSongList());
+        Collections.reverse(reversedAlbumTracks);
+
+        GetPlaylistSongsRequest request = GetPlaylistSongsRequest.builder()
+                                              .withId(playlistId)
+                                              .withOrder(SongOrder.REVERSED)
+                                              .build();
+        when(playlistDao.getPlaylist(playlistId)).thenReturn(playlist);
+
+        // WHEN
+        GetPlaylistSongsResult result = getPlaylistSongsActivity.handleRequest(request, null);
+
+        // THEN
+        AlbumTrackTestHelper.assertAlbumTracksEqualSongModels(reversedAlbumTracks, result.getSongList());
+    }
+
+    @Test
+    void handleRequest_withShuffledSongOrder_returnsSongsInAnyOrder() {
+        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(8);
+        String playlistId = playlist.getId();
+        List<SongModel> songModels = new LinkedList<>();
+
+        for (AlbumTrack albumTrack : playlist.getSongList()) {
+            songModels.add(new ModelConverter().toSongModel(albumTrack));
+        }
 //        List<SongModel> songModels = new ModelConverter().toSongModel(playlist.getSongList());
-//
-//        GetPlaylistSongsRequest request = GetPlaylistSongsRequest.builder()
-//                                              .withId(playlistId)
-//                                              .withOrder(SongOrder.REVERSED)
-//                                              .build();
-//        when(playlistDao.getPlaylist(playlistId)).thenReturn(playlist);
-//
-//        // WHEN
-//        GetPlaylistSongsResult result = getPlaylistSongsActivity.handleRequest(request, null);
-//
-//        // THEN
-//        assertEquals(playlist.getSongList().size(),
-//                     result.getSongList().size(),
-//                     String.format("Expected album tracks (%s) and song models (%s) to be the same length",
-//                                   playlist.getSongList(),
-//                                   result.getSongList()));
-//        assertTrue(
-//            songModels.containsAll(result.getSongList()),
-//            String.format("album list (%s) and song models (%s) are the same length, but don't contain the same " +
-//                          "entries. Expected song models: %s. Returned song models: %s",
-//                          playlist.getSongList(),
-//                          result.getSongList(),
-//                          songModels,
-//                          result.getSongList()));
-//    }
+
+        GetPlaylistSongsRequest request = GetPlaylistSongsRequest.builder()
+                                              .withId(playlistId)
+                                              .withOrder(SongOrder.REVERSED)
+                                              .build();
+        when(playlistDao.getPlaylist(playlistId)).thenReturn(playlist);
+
+        // WHEN
+        GetPlaylistSongsResult result = getPlaylistSongsActivity.handleRequest(request, null);
+
+        // THEN
+        assertEquals(playlist.getSongList().size(),
+                     result.getSongList().size(),
+                     String.format("Expected album tracks (%s) and song models (%s) to be the same length",
+                                   playlist.getSongList(),
+                                   result.getSongList()));
+        assertTrue(
+            songModels.containsAll(result.getSongList()),
+            String.format("album list (%s) and song models (%s) are the same length, but don't contain the same " +
+                          "entries. Expected song models: %s. Returned song models: %s",
+                          playlist.getSongList(),
+                          result.getSongList(),
+                          songModels,
+                          result.getSongList()));
+    }
 
     @Test
     public void handleRequest_noMatchingPlaylistId_throwsPlaylistNotFoundException() {
@@ -157,17 +161,20 @@ public class GetPlaylistSongsActivityTest {
         assertThrows(PlaylistNotFoundException.class, () -> getPlaylistSongsActivity.handleRequest(request, null));
     }
 
-//    @Test
-//    public void handleRequest_withInvalidSongOrder_throwsException() {
-//        // GIVEN
-//        Playlist playlist = PlaylistTestHelper.generatePlaylist();
-//        String id = playlist.getId();
-//        GetPlaylistSongsRequest request = GetPlaylistSongsRequest.builder()
-//            .withId(id)
-//            .withOrder("NOT A VALID ORDER")
-//            .build();
-//
-//        // WHEN + THEN
-//        assertThrows(IllegalArgumentException.class, () -> getPlaylistSongsActivity.handleRequest(request));
-//    }
+    @Test
+    public void handleRequest_withInvalidSongOrder_throwsException() {
+        // GIVEN
+        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(1);
+        String id = playlist.getId();
+
+
+        GetPlaylistSongsRequest request = GetPlaylistSongsRequest.builder()
+            .withId(id)
+            .withOrder(SongOrder.INVALID_ORDER)
+            .build();
+
+        // WHEN THEN
+        when(playlistDao.getPlaylist(id)).thenReturn(playlist);
+        assertThrows(IllegalArgumentException.class, () -> getPlaylistSongsActivity.handleRequest(request, null));
+    }
 }
